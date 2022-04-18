@@ -80,7 +80,10 @@ body {
 }
 
 @media (max-width: 1000px) {
-	#links, #p1 { /* this stuff is relatively unimportant */
+	#links {
+        position: static;
+    }
+    #p1 { /* this stuff is relatively unimportant */
 		display: none;
 	}
 	#character_picker {
