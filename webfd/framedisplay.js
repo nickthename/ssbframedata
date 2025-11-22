@@ -122,20 +122,89 @@ function changeChar(elmnt)
 // Populates the 'Attack' dropdown list for the specific character
 function populateAttack(charSelected)
 {
-  var optgroupAtt = document.getElementById("selectAtt").firstElementChild;
-  // If element "selectAtt" is already filled, removes previous values
-  while (optgroupAtt.firstElementChild)
+  // Try to preserve current selection when switching characters
+  var previousSelection = globalVar.attack.value;
+
+  var selectAtt = document.getElementById("selectAtt");
+
+  // Clear any existing groups/options
+  while (selectAtt.firstChild)
   {
-    optgroupAtt.removeChild(optgroupAtt.firstElementChild);
+    selectAtt.removeChild(selectAtt.firstChild);
   }
+
+  var optgroups = {
+    aerial: document.createElement("optgroup"),
+    tilt: document.createElement("optgroup"),
+    smash: document.createElement("optgroup"),
+    special: document.createElement("optgroup"),
+    attackOther: document.createElement("optgroup"),
+    ledge: document.createElement("optgroup"),
+    ground: document.createElement("optgroup"),
+    defendOther: document.createElement("optgroup")
+  };
+  optgroups.aerial.label = "Aerials";
+  optgroups.tilt.label = "Tilts";
+  optgroups.smash.label = "Smashes";
+  optgroups.special.label = "Specials";
+  optgroups.attackOther.label = "Other Attacks";
+  optgroups.ledge.label = "Ledge";
+  optgroups.ground.label = "Ground (Tech/Get-up)";
+  optgroups.defendOther.label = "Other";
+
+  function categorizeMoveKey(key)
+  {
+    if (key.indexOf("ledge-") === 0) { return "ledge"; }
+    if (key.indexOf("tech") === 0 || key.indexOf("getup") === 0) { return "ground"; }
+    if (key.indexOf("roll-") === 0 ||
+        key.indexOf("shield-") === 0 ||
+        key === "taunt" ||
+        key === "crouch")
+    {
+      return "defendOther";
+    }
+    if (key.indexOf("air-") === 0) { return "aerial"; }
+    if (key.indexOf("tilt-") === 0) { return "tilt"; }
+    if (key.indexOf("smash-") === 0) { return "smash"; }
+    if (key.indexOf("special-") === 0) { return "special"; }
+    if (key.indexOf("jab-") === 0 ||
+        key.indexOf("grab") === 0 ||
+        key.indexOf("throw-") === 0 ||
+        key === "dash-a")
+    {
+      return "attackOther";
+    }
+    return "attackOther";
+  }
+
   // Fills the new values for the character
   for (var key in characterObject[charSelected].move) {
     var optionAtt = document.createElement("OPTION");
     optionAtt.text = characterObject[charSelected].move[key].name;
-    optionAtt.value = key
-    optgroupAtt.appendChild(optionAtt);
+    optionAtt.value = key;
+    var bucket = categorizeMoveKey(key);
+    optgroups[bucket].appendChild(optionAtt);
   }
-    changeAtt();
+
+  ["aerial", "tilt", "smash", "special", "attackOther", "ledge", "ground", "defendOther"].forEach(function(groupKey) {
+    if (optgroups[groupKey].childElementCount > 0)
+    {
+      selectAtt.appendChild(optgroups[groupKey]);
+    }
+  });
+
+  // Restore previous selection if possible, otherwise choose first option
+  var restored = false;
+  for (var i = 0; i < selectAtt.options.length; i++) {
+    if (selectAtt.options[i].value === previousSelection) {
+      selectAtt.selectedIndex = i;
+      restored = true;
+      break;
+    }
+  }
+  if (!restored && selectAtt.options.length > 0) { selectAtt.selectedIndex = 0; }
+
+  changeAtt();
 }
 
 // This function is called when a new attack is selected from the drop-down list
