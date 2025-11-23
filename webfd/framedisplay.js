@@ -76,10 +76,11 @@ function initSettings()
 
   if (typeof urlChar !== 'undefined'){
       document.getElementById("selectCharHidden").value=urlChar;
-      document.getElementById("p1_select").innerHTML="<img src=\"../images/" + urlChar + "_card.png\" style=\"width: 100%; height: 100%;\">"
+      var card = urlChar;
       if(urlChar == "purin"){
-        document.getElementById("p1_select").innerHTML="<img src=\"../images/jiggly_card.png\" style=\"width: 100%; height: 100%;\">"
+        card = "jiggly";
       }
+      document.getElementById("p1_select").innerHTML="<img src=\"../images/" + card + "_card.png\" style=\"width: 100%; height: 100%;\">"
       console.log(urlMove);
       changeChar();
       globalVar.attack.value=urlMove
@@ -215,6 +216,15 @@ function changeAtt(attDropdownObject)
   globalVar.maxFrame = characterObject[globalVar.character.value].move[globalVar.attack.value].totalFrames
   document.getElementById("maxFrameSpan").innerHTML = '/' + globalVar.maxFrame;
   window.location.hash = globalVar.character.value + "&" + globalVar.attack.value;
+  // Prevent arrow keys from cycling the dropdown after selection
+  if (attDropdownObject && typeof attDropdownObject.blur === "function")
+  {
+    attDropdownObject.blur();
+  }
+  else if (document.activeElement === globalVar.attack && typeof document.activeElement.blur === "function")
+  {
+    document.activeElement.blur();
+  }
 
   // Show callout for shield/roll options that skip frame 1 when already shielding
   var callout = document.getElementById("callout");

@@ -37,6 +37,10 @@ body {
 	width: 100%;
 	max-width: 480px;
 	margin-top: 10px;
+	display: block;
+	aspect-ratio: 4 / 3;
+	background-color: #000;
+	border: 1px solid #333;
 }
 
 #play_controls {
