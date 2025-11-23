@@ -329,5 +329,4 @@ function dummy()
   //
 }
 
-
 window.onload = initSettings;
