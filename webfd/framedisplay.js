@@ -16,7 +16,7 @@ function initSettings()
   
   // Sets the default form values
   globalVar.fps = 30
-  globalVar.selectSpeed.value = "30";
+  globalVar.selectSpeed.value = "60";
   globalVar.overlayRadio.checked = true;
   globalVar.repeatAnim.checked = true;
   globalVar.videoPlayer.loop = true;
@@ -53,7 +53,7 @@ function initSettings()
   }, false);
   globalVar.videoPlayer.addEventListener("ratechange", function() {
     chosenFPS = globalVar.videoPlayer.playbackRate * globalVar.fps;
-    if ([15, 20, 30].indexOf(chosenFPS) >= 0)
+    if ([15, 20, 30, 60].indexOf(chosenFPS) >= 0)
     {
       globalVar.selectSpeed.value = globalVar.videoPlayer.playbackRate * globalVar.fps;
     }

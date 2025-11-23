@@ -93,19 +93,22 @@
 					<input id="nextFrameButton" type="button" onclick="goToNextFrame()" accesskey='n' value=">">
 					<input id="lastFrameButton" type="button" onclick="goToLastFrame()" value=">|">
 					<br>
-					Speed :
-					<select id="selectSpeed" onchange="changeSpeed(this)">
-						<option value="15">15 FPS</option>
-						<option value="20">20 FPS</option>
-						<option value="30">30 FPS</option>
-					</select>
-					&nbsp;
-					<input id="hitboxRadio" type="radio" name="displayModeRadio" value="hitbox"
-						   onclick="changeHitbox(this)">Hitbox
-					<input id="overlayRadio" type="radio" name="displayModeRadio" value="overlay"
-						   onclick="changeHitbox(this)">Overlay
-					&nbsp;
-					<label>Repeat: <input id="repeatCheckbox" type="checkbox" onclick="changeRepeat(this)"></label>
+					<div style="white-space: nowrap;">
+						Speed:
+						<select id="selectSpeed" onchange="changeSpeed(this)">
+							<option value="60">Full (60 FPS)</option>
+							<option value="30">0.5x (30 FPS)</option>
+							<option value="20">0.33x (20 FPS)</option>
+							<option value="15">0.25x (15 FPS)</option>
+						</select>
+						&nbsp;
+						<input id="hitboxRadio" type="radio" name="displayModeRadio" value="hitbox"
+							   onclick="changeHitbox(this)">Hitbox
+						<input id="overlayRadio" type="radio" name="displayModeRadio" value="overlay"
+							   onclick="changeHitbox(this)">Overlay
+						&nbsp;
+						<label>Repeat: <input id="repeatCheckbox" type="checkbox" onclick="changeRepeat(this)"></label>
+					</div>
 				</div>
 				<div id="callout" style="margin-top:8px; color:#c00; display:none; font-weight:bold;"></div>
 
