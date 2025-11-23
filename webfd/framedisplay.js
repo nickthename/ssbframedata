@@ -215,6 +215,15 @@ function changeAtt(attDropdownObject)
   globalVar.maxFrame = characterObject[globalVar.character.value].move[globalVar.attack.value].totalFrames
   document.getElementById("maxFrameSpan").innerHTML = '/' + globalVar.maxFrame;
   window.location.hash = globalVar.character.value + "&" + globalVar.attack.value;
+
+  // Show callout for shield/roll options that skip frame 1 when already shielding
+  var callout = document.getElementById("callout");
+  var needsCallout = ["roll-b","roll-f","shield-j","shield-d"].indexOf(globalVar.attack.value) !== -1;
+  if (callout)
+  {
+    callout.style.display = needsCallout ? "block" : "none";
+    callout.innerHTML = needsCallout ? "Note: If already shielding, frame 1 will be skipped" : "";
+  }
   
   changeSourceVid();
 }
