@@ -23,6 +23,57 @@ body {
 	font-size: 1em;
 }
 
+#version_language_row {
+	margin-top: 6px;
+	margin-bottom: 6px;
+	font-size: 0.95em;
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+#version_language_row select {
+	background-color: #1F1F1F;
+	color: #FFF;
+	border: solid 1px #666;
+	padding: 2px 6px;
+	border-radius: 4px;
+}
+
+#language_float {
+	position: fixed;
+	top: 12px;
+	right: 12px;
+	z-index: 10;
+	background: #2a2a2a;
+	border: 1px solid #444;
+	border-radius: 8px;
+	padding: 6px 10px;
+	font-size: 0.9em;
+	opacity: 0.9;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+	display: flex;
+	gap: 6px;
+	align-items: flex-start;
+	justify-content: center;
+	flex-direction: column;
+}
+#language_float select {
+	background-color: #1F1F1F;
+	color: #FFF;
+	border: solid 1px #666;
+	padding: 2px 6px;
+	border-radius: 4px;
+}
+#language_float .lang-row {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+#language_float:hover {
+	opacity: 1;
+}
+
 #selectAtt {
 	background-color: #1F1F1F;
 	color: #FFF;
@@ -109,5 +160,17 @@ body {
 	}
 	#play_controls input {
 		font-size: 14px;
+	}
+	#language_float {
+		position: static;
+		margin: 12px auto;
+		transform: none;
+		justify-content: center;
+		flex-direction: row;
+		gap: 8px;
+		align-items: center;
+	}
+	#language_float .lang-row {
+		flex-direction: row;
 	}
 }

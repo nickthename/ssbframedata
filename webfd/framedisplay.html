@@ -4,6 +4,7 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Frame Display</title>
+	<script src="move-translations.js" type="text/javascript"></script>
 	<script src="framedisplay.js" type="text/javascript"></script>
 	<script src="characters.js" type="text/javascript"></script>
 	<script src="keyboard-shortcuts.js" type="text/javascript"></script>
@@ -11,33 +12,47 @@
 </head>
 <body>
 
-<div style='height: auto; width: auto; margin-left: auto; margin-right: auto;'>
+	<div id="language_float">
+		<div class="lang-row">
+			<label for="selectLang">🌐</label>
+			<select id="selectLang">
+				<option value="en">English</option>
+				<option value="ja">日本語</option>
+			</select>
+		</div>
+		<select id="selectVersion">
+			<option value="U">(U) Version</option>
+			<option value="J">(J) Version</option>
+		</select>
+	</div>
+
+	<div style='height: auto; width: auto; margin-left: auto; margin-right: auto;'>
 
 	<div id="character_picker">
 		<img style='cursor: pointer;' id='luigi_select' src='../images/luigi_select.png'
-			 onclick='(function(elmnt) { document.getElementById("p1_select").innerHTML="<img src=\"../images/" + elmnt.id.replace("_select","") + "_card.png\" style=\"width: 100%; height: 100%;\">"; document.getElementById("selectCharHidden").value="luigi"; changeChar(); })(this)'>
+			 onclick='selectCharacter("luigi")'>
 		<img style='cursor: pointer;' id='mario_select' src='../images/mario_select.png'
-			 onclick='(function(elmnt) { document.getElementById("p1_select").innerHTML="<img src=\"../images/" + elmnt.id.replace("_select","") + "_card.png\" style=\"width: 100%; height: 100%;\">"; document.getElementById("selectCharHidden").value="mario"; changeChar(); })(this)'>
+			 onclick='selectCharacter("mario")'>
 		<img style='cursor: pointer;' id='dk_select' src='../images/dk_select.png'
-			 onclick='(function(elmnt) { document.getElementById("p1_select").innerHTML="<img src=\"../images/" + elmnt.id.replace("_select","") + "_card.png\" style=\"width: 100%; height: 100%;\">"; document.getElementById("selectCharHidden").value="dk"; changeChar(); })(this)'>
+			 onclick='selectCharacter("dk")'>
 		<img style='cursor: pointer;' id='link_select' src='../images/link_select.png'
-			 onclick='(function(elmnt) { document.getElementById("p1_select").innerHTML="<img src=\"../images/" + elmnt.id.replace("_select","") + "_card.png\" style=\"width: 100%; height: 100%;\">"; document.getElementById("selectCharHidden").value="link"; changeChar(); })(this)'>
+			 onclick='selectCharacter("link")'>
 		<img style='cursor: pointer;' id='samus_select' src='../images/samus_select.png'
-			 onclick='(function(elmnt) { document.getElementById("p1_select").innerHTML="<img src=\"../images/" + elmnt.id.replace("_select","") + "_card.png\" style=\"width: 100%; height: 100%;\">"; document.getElementById("selectCharHidden").value="samus"; changeChar(); })(this)'>
+			 onclick='selectCharacter("samus")'>
 		<img style='cursor: pointer;' id='falcon_select' src='../images/falcon_select.png'
-			 onclick='(function(elmnt) { document.getElementById("p1_select").innerHTML="<img src=\"../images/" + elmnt.id.replace("_select","") + "_card.png\" style=\"width: 100%; height: 100%;\">"; document.getElementById("selectCharHidden").value="falcon"; changeChar(); })(this)'>
+			 onclick='selectCharacter("falcon")'>
 		<img style='cursor: pointer;' id='ness_select' src='../images/ness_select.png'
-			 onclick='(function(elmnt) { document.getElementById("p1_select").innerHTML="<img src=\"../images/" + elmnt.id.replace("_select","") + "_card.png\" style=\"width: 100%; height: 100%;\">"; document.getElementById("selectCharHidden").value="ness"; changeChar(); })(this)'>
+			 onclick='selectCharacter("ness")'>
 		<img style='cursor: pointer;' id='yoshi_select' src='../images/yoshi_select.png'
-			 onclick='(function(elmnt) { document.getElementById("p1_select").innerHTML="<img src=\"../images/" + elmnt.id.replace("_select","") + "_card.png\" style=\"width: 100%; height: 100%;\">"; document.getElementById("selectCharHidden").value="yoshi"; changeChar(); })(this)'>
+			 onclick='selectCharacter("yoshi")'>
 		<img style='cursor: pointer;' id='kirby_select' src='../images/kirby_select.png'
-			 onclick='(function(elmnt) { document.getElementById("p1_select").innerHTML="<img src=\"../images/" + elmnt.id.replace("_select","") + "_card.png\" style=\"width: 100%; height: 100%;\">"; document.getElementById("selectCharHidden").value="kirby"; changeChar(); })(this)'>
+			 onclick='selectCharacter("kirby")'>
 		<img style='cursor: pointer;' id='fox_select' src='../images/fox_select.png'
-			 onclick='(function(elmnt) { document.getElementById("p1_select").innerHTML="<img src=\"../images/" + elmnt.id.replace("_select","") + "_card.png\" style=\"width: 100%; height: 100%;\">"; document.getElementById("selectCharHidden").value="fox"; changeChar(); })(this)'>
+			 onclick='selectCharacter("fox")'>
 		<img style='cursor: pointer;' id='pikachu_select' src='../images/pikachu_select.png'
-			 onclick='(function(elmnt) { document.getElementById("p1_select").innerHTML="<img src=\"../images/" + elmnt.id.replace("_select","") + "_card.png\" style=\"width: 100%; height: 100%;\">"; document.getElementById("selectCharHidden").value="pikachu"; changeChar(); })(this)'>
+			 onclick='selectCharacter("pikachu")'>
 		<img style='cursor: pointer;' id='jiggly_select' src='../images/jiggly_select.png'
-			 onclick='(function(elmnt) { document.getElementById("p1_select").innerHTML="<img src=\"../images/" + elmnt.id.replace("_select","") + "_card.png\" style=\"width: 100%; height: 100%;\">"; document.getElementById("selectCharHidden").value="purin"; changeChar(); })(this)'>
+			 onclick='selectCharacter("purin")'>
 		<input type='hidden' id='selectCharHidden' value='luigi'>
 	</div>
 	<div style='float: none; clear: both'>
@@ -93,25 +108,23 @@
 					<input id="nextFrameButton" type="button" onclick="goToNextFrame()" accesskey='n' value=">">
 					<input id="lastFrameButton" type="button" onclick="goToLastFrame()" value=">|">
 					<br>
-					<div style="white-space: nowrap;">
-						Speed:
+					<div class="controls-row">
+						<span class="control-label">Speed</span>
 						<select id="selectSpeed" onchange="changeSpeed(this)">
 							<option value="60">Full (60 FPS)</option>
 							<option value="30">0.5x (30 FPS)</option>
 							<option value="20">0.33x (20 FPS)</option>
 							<option value="15">0.25x (15 FPS)</option>
 						</select>
-						&nbsp;
 						<input id="hitboxRadio" type="radio" name="displayModeRadio" value="hitbox"
-							   onclick="changeHitbox(this)">Hitbox
+							   onclick="changeHitbox(this)"><label for="hitboxRadio">Hitbox</label>
 						<input id="overlayRadio" type="radio" name="displayModeRadio" value="overlay"
-							   onclick="changeHitbox(this)">Overlay
-						&nbsp;
-						<label>Repeat: <input id="repeatCheckbox" type="checkbox" onclick="changeRepeat(this)"></label>
+							   onclick="changeHitbox(this)"><label for="overlayRadio">Overlay</label>
+						<label class="loop-label">&#x21bb; <input id="repeatCheckbox" type="checkbox" onclick="changeRepeat(this)"></label>
+						<span id="playStatus" class="status-dot paused"></span>
 					</div>
 				</div>
 				<div id="callout" style="margin-top:8px; color:#c00; display:none; font-weight:bold;"></div>
-
 			</div>
 		</div>
 

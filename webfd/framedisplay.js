@@ -1,4 +1,9 @@
 var globalVar = new Object();
+var loadedCharacters = {}; // cache per version
+var uiText = {
+  en: { character:"Character: ", attack:"Attack: ", speed:"Speed", hitbox:"Hitbox", overlay:"Overlay", loop:"Loop \u21bb", play:"Play", pause:"Pause", playing:"Playing", paused:"Paused" },
+  ja: { character:"キャラ: ", attack:"技: ", speed:"速度", hitbox:"ヒットボックス", overlay:"オーバーレイ", loop:"ループ \u21bb", play:"再生", pause:"一時停止", playing:"再生中", paused:"停止中" }
+};
 
 function initSettings()
 {
@@ -13,6 +18,15 @@ function initSettings()
   globalVar.selectSpeed = document.getElementById("selectSpeed");
   globalVar.videoPlayer = document.getElementById("videoPlayer");
   globalVar.manualFrameText = document.getElementById("manualFrameText");
+  globalVar.selectVersion = document.getElementById("selectVersion");
+  globalVar.selectLang = document.getElementById("selectLang");
+  if (globalVar.selectVersion) {
+    globalVar.selectVersion.onchange = function(){ setVersion(this.value); };
+  }
+  if (globalVar.selectLang) {
+    globalVar.selectLang.onchange = function(){ setLanguage(this.value); };
+  }
+  globalVar.translations = (typeof moveTranslations !== "undefined") ? moveTranslations : {en:{},ja:{}};
   
   // Sets the default form values
   globalVar.fps = 30
@@ -71,40 +85,44 @@ function initSettings()
       urlChar = window.location.hash.substring(1,window.location.hash.indexOf("&"));
       urlMove=window.location.hash.substring(window.location.hash.indexOf("&")+1,);
   }
- 
-  changeChar();
 
-  if (typeof urlChar !== 'undefined'){
-      document.getElementById("selectCharHidden").value=urlChar;
-      var card = urlChar;
-      if(urlChar == "purin"){
-        card = "jiggly";
-      }
-      document.getElementById("p1_select").innerHTML="<img src=\"../images/" + card + "_card.png\" style=\"width: 100%; height: 100%;\">"
-      console.log(urlMove);
-      changeChar();
-      globalVar.attack.value=urlMove
-      console.log(globalVar.attack.value);
-      changeAtt();
-      console.log(globalVar.attack.value);
+  if (typeof characterObject !== "undefined")
+  {
+    loadedCharacters["U"] = characterObject;
   }
 
-  // Uses function changeSpeed, otherwise only the element "selectSpeed" is changed
-  changeSpeed(globalVar.selectSpeed);
-  initKeydown();
+  var params = readParams();
+  setVersion(params.version || "U", function() {
+    setLanguage(params.lang || "en");
+
+    changeChar();
+
+    if (typeof urlChar !== 'undefined'){
+        document.getElementById("selectCharHidden").value=urlChar;
+        setCardImage(urlChar);
+        changeChar();
+        globalVar.attack.value=urlMove
+        changeAtt();
+    }
+
+    // Uses function changeSpeed, otherwise only the element "selectSpeed" is changed
+    changeSpeed(globalVar.selectSpeed);
+    initKeydown();
+  });
 }
 
 // Changes the video src url depending on the globalVar.overlayRadio.checked value
 function changeSourceVid()
 {
   var currentSpeed = globalVar.videoPlayer.playbackRate;
+  var base = globalVar.fdBase || "../fd/";
   if (globalVar.overlayRadio.checked)
   {
-    globalVar.videoPlayer.src = "../fd/" + globalVar.character.value + "/" + globalVar.attack.value + "/o.mp4";
+    globalVar.videoPlayer.src = base + globalVar.character.value + "/" + globalVar.attack.value + "/o.mp4";
   }
   else if (globalVar.hitboxRadio.checked)
   {
-    globalVar.videoPlayer.src = "../fd/" + globalVar.character.value + "/" + globalVar.attack.value + "/b.mp4";
+    globalVar.videoPlayer.src = base + globalVar.character.value + "/" + globalVar.attack.value + "/b.mp4";
   }
   // Sets the frame count to 1 everytime the video src url changes
   globalVar.manualFrameText.value = 1;
@@ -116,7 +134,7 @@ function changeChar(elmnt)
 {
   globalVar.playing = false;
   //console.log(globalVar.playing);
-  document.getElementsByTagName("h1")[0].innerHTML = "Character: " + characterObject[globalVar.character.value].name; //change for new select
+  document.getElementsByTagName("h1")[0].innerHTML = (globalVar.langText ? globalVar.langText.character : "Character: ") + characterObject[globalVar.character.value].name; //change for new select
   populateAttack(globalVar.character.value);
 }
 
@@ -144,14 +162,15 @@ function populateAttack(charSelected)
     ground: document.createElement("optgroup"),
     defendOther: document.createElement("optgroup")
   };
-  optgroups.aerial.label = "Aerials";
-  optgroups.tilt.label = "Tilts";
-  optgroups.smash.label = "Smashes";
-  optgroups.special.label = "Specials";
-  optgroups.attackOther.label = "Other Attacks";
-  optgroups.ledge.label = "Ledge";
-  optgroups.ground.label = "Ground (Tech/Get-up)";
-  optgroups.defendOther.label = "Other";
+  var cats = (globalVar.langText && globalVar.langText.categories) ? globalVar.langText.categories : {};
+  optgroups.aerial.label = cats.aerial || "Aerials";
+  optgroups.tilt.label = cats.tilt || "Tilts";
+  optgroups.smash.label = cats.smash || "Smashes";
+  optgroups.special.label = cats.special || "Specials";
+  optgroups.attackOther.label = cats.attackOther || "Other Attacks";
+  optgroups.ledge.label = cats.ledge || "Ledge";
+  optgroups.ground.label = cats.ground || "Ground (Tech/Get-up)";
+  optgroups.defendOther.label = cats.defendOther || "Other";
 
   function categorizeMoveKey(key)
   {
@@ -181,7 +200,7 @@ function populateAttack(charSelected)
   // Fills the new values for the character
   for (var key in characterObject[charSelected].move) {
     var optionAtt = document.createElement("OPTION");
-    optionAtt.text = characterObject[charSelected].move[key].name;
+    optionAtt.text = translatedMoveName(charSelected, key);
     optionAtt.value = key;
     var bucket = categorizeMoveKey(key);
     optgroups[bucket].appendChild(optionAtt);
@@ -244,6 +263,7 @@ function playFrame()
   {
     globalVar.playing = true;
     globalVar.videoPlayer.play();
+    updatePlayStatus();
   }
   else
   {
@@ -256,6 +276,7 @@ function pauseFrame()
 {
   globalVar.playing = false;
   globalVar.videoPlayer.pause()
+  updatePlayStatus();
 }
 
 // Goes to the first frame
@@ -319,6 +340,122 @@ function changeSpeed(speedSelected)
   globalVar.videoPlayer.playbackRate = speedSelected.value / globalVar.fps;
 }
 
+function selectCharacter(charId)
+{
+  document.getElementById("selectCharHidden").value = charId;
+  setCardImage(charId);
+  changeChar();
+}
+
+function setCardImage(charId)
+{
+  var card = cardNameForChar(charId);
+  var imgBase = globalVar.imgBase || "../images/";
+  document.getElementById("p1_select").innerHTML="<img src=\"" + imgBase + card + "_card.png\" style=\"width: 100%; height: 100%;\">";
+}
+
+function refreshCharacterPickerImages()
+{
+  var chars = ["luigi","mario","dk","link","samus","falcon","ness","yoshi","kirby","fox","pikachu","purin"];
+  var base = globalVar.imgBase || "../images/";
+  for (var i=0;i<chars.length;i++)
+  {
+    var el = document.getElementById(chars[i] + "_select");
+    if (el) { el.src = base + cardNameForChar(chars[i]) + "_select.png"; }
+  }
+}
+
+function cardNameForChar(charId)
+{
+  if (charId === "purin") return "jiggly";
+  return charId;
+}
+
+function translatedMoveName(charId, moveKey)
+{
+  var lang = globalVar.lang || "en";
+  var pack = (globalVar.translations && globalVar.translations[lang]) ? globalVar.translations[lang] : {};
+  var byChar = (pack.moves && pack.moves[charId]) ? pack.moves[charId] : {};
+  var common = pack.movesCommon || {};
+  // also allow root-level moves map to be treated as common if values are strings
+  var rootMoves = (pack.moves && typeof pack.moves[moveKey] === "string") ? pack.moves : {};
+  // fallback: if English language but current version is J, try pulling the U-version name first
+  var englishBase = null;
+  if (lang === "en" && loadedCharacters["U"] && loadedCharacters["U"][charId] && loadedCharacters["U"][charId].move && loadedCharacters["U"][charId].move[moveKey])
+  {
+    englishBase = loadedCharacters["U"][charId].move[moveKey].name;
+  }
+  return byChar[moveKey] || common[moveKey] || rootMoves[moveKey] || englishBase || characterObject[charId].move[moveKey].name || moveKey;
+}
+
+function readParams()
+{
+  var params = { version: "U", lang: "en" };
+  var search = new URLSearchParams(window.location.search);
+  if (search.get("ver")) { params.version = search.get("ver").toUpperCase(); }
+  if (search.get("lang")) { params.lang = search.get("lang").toLowerCase(); }
+  // Hash still controls character & move
+  return params;
+}
+
+function setVersion(ver, cb)
+{
+  globalVar.version = (ver === "J") ? "J" : "U";
+  globalVar.fdBase = (globalVar.version === "J") ? "../J/fd/" : "../fd/";
+  globalVar.imgBase = (globalVar.version === "J") ? "../J/images/" : "../images/";
+
+  if (globalVar.selectVersion) { globalVar.selectVersion.value = globalVar.version; }
+
+  refreshCharacterPickerImages();
+  setCardImage(globalVar.character.value);
+
+  loadCharactersForVersion(globalVar.version, function(){
+    changeChar();
+    if (typeof cb === "function") cb();
+  });
+}
+
+function setLanguage(lang)
+{
+  globalVar.lang = (lang === "ja") ? "ja" : "en";
+  if (globalVar.selectLang) { globalVar.selectLang.value = globalVar.lang; }
+
+  var t = uiText[globalVar.lang] || uiText.en;
+  // merge in category labels from moveTranslations if available
+  var cat = (globalVar.translations && globalVar.translations[globalVar.lang] && globalVar.translations[globalVar.lang].categories) ? globalVar.translations[globalVar.lang].categories : {};
+  t.categories = cat;
+  globalVar.langText = t;
+  document.getElementById("move_display").innerHTML = t.attack;
+  document.getElementById("character_display").innerHTML = t.character + characterObject[globalVar.character.value].name;
+  document.getElementById("playButton").value = t.play;
+  document.getElementById("pauseButton").value = t.pause;
+  // radios labels
+  var labels = document.querySelectorAll("label[for='hitboxRadio'], label[for='overlayRadio']");
+  if (labels.length >=2) {
+    labels[0].textContent = t.hitbox;
+    labels[1].textContent = t.overlay;
+  }
+  updatePlayStatus();
+  populateAttack(globalVar.character.value);
+}
+
+function loadCharactersForVersion(ver, cb)
+{
+  if (loadedCharacters[ver])
+  {
+    characterObject = loadedCharacters[ver];
+    if (typeof cb === "function") cb();
+    return;
+  }
+
+  var script = document.createElement("script");
+  script.src = (ver === "J") ? "../J/webfd/characters.js" : "characters.js";
+  script.onload = function() {
+    loadedCharacters[ver] = characterObject;
+    if (typeof cb === "function") cb();
+  };
+  document.head.appendChild(script);
+}
 // This function is called whenever the displayModeRadio is changed.
 function changeHitbox()
 {
@@ -337,6 +474,25 @@ function changeRepeat(repeatSelected)
 function dummy()
 {
   //
+}
+
+function updatePlayStatus()
+{
+  var status = document.getElementById("playStatus");
+  if (!status) { return; }
+  var t = globalVar.langText || uiText[globalVar.lang] || uiText.en || {};
+  if (globalVar.playing)
+  {
+    status.textContent = "";
+    status.classList.add("playing");
+    status.classList.remove("paused");
+  }
+  else
+  {
+    status.textContent = "";
+    status.classList.add("paused");
+    status.classList.remove("playing");
+  }
 }
 
 window.onload = initSettings;
