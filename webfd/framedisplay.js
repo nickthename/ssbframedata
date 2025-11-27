@@ -264,6 +264,7 @@ function playFrame()
     globalVar.playing = true;
     globalVar.videoPlayer.play();
     updatePlayStatus();
+    updatePlayPauseButton();
   }
   else
   {
@@ -277,6 +278,7 @@ function pauseFrame()
   globalVar.playing = false;
   globalVar.videoPlayer.pause()
   updatePlayStatus();
+  updatePlayPauseButton();
 }
 
 // Goes to the first frame
@@ -427,8 +429,6 @@ function setLanguage(lang)
   globalVar.langText = t;
   document.getElementById("move_display").innerHTML = t.attack;
   document.getElementById("character_display").innerHTML = t.character + characterObject[globalVar.character.value].name;
-  document.getElementById("playButton").value = t.play;
-  document.getElementById("pauseButton").value = t.pause;
   // radios labels
   var labels = document.querySelectorAll("label[for='hitboxRadio'], label[for='overlayRadio']");
   if (labels.length >=2) {
@@ -436,6 +436,7 @@ function setLanguage(lang)
     labels[1].textContent = t.overlay;
   }
   updatePlayStatus();
+  updatePlayPauseButton();
   populateAttack(globalVar.character.value);
 }
 
@@ -493,6 +494,22 @@ function updatePlayStatus()
     status.classList.add("paused");
     status.classList.remove("playing");
   }
+}
+
+function updatePlayPauseButton()
+{
+  var btn = document.getElementById("playPauseButton");
+  if (!btn) return;
+  var t = globalVar.langText || uiText[globalVar.lang] || uiText.en || {};
+  btn.value = globalVar.playing ? (t.pause || "Pause") : (t.play || "Play");
+}
+
+function togglePlayPause()
+{
+  if (globalVar.playing) pauseFrame(); else playFrame();
+  // Avoid stealing arrow keys: drop focus from the button
+  var btn = document.getElementById("playPauseButton");
+  if (btn && typeof btn.blur === "function") { btn.blur(); }
 }
 
 window.onload = initSettings;

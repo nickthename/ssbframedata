@@ -97,8 +97,7 @@
 
 
 				<div id="play_controls">
-					<input id="playButton" type="button" onclick="playFrame()" value="Play">
-					<input id="pauseButton" type="button" onclick="pauseFrame()" value="Pause">
+					<input id="playPauseButton" type="button" onclick="togglePlayPause()" value="Play">
 					<br>
 					<input id="firstFrameButton" type="button" onclick="goToFirstFrame()" value="|<">
 					<input id="previousFrameButton" type="button" onclick="goToPreviousFrame()" accesskey='b' value="<">
@@ -111,15 +110,15 @@
 					<div class="controls-row">
 						<span class="control-label">Speed</span>
 						<select id="selectSpeed" onchange="changeSpeed(this)">
-							<option value="60">Full (60 FPS)</option>
+							<option value="60">Normal (60 FPS)</option>
 							<option value="30">0.5x (30 FPS)</option>
 							<option value="20">0.33x (20 FPS)</option>
 							<option value="15">0.25x (15 FPS)</option>
 						</select>
-						<input id="hitboxRadio" type="radio" name="displayModeRadio" value="hitbox"
-							   onclick="changeHitbox(this)"><label for="hitboxRadio">Hitbox</label>
-						<input id="overlayRadio" type="radio" name="displayModeRadio" value="overlay"
-							   onclick="changeHitbox(this)"><label for="overlayRadio">Overlay</label>
+						<label class="radio-label" for="hitboxRadio">Hitbox</label><input id="hitboxRadio" type="radio" name="displayModeRadio" value="hitbox"
+							   onclick="changeHitbox(this)">
+						<label class="radio-label" for="overlayRadio">Overlay</label><input id="overlayRadio" type="radio" name="displayModeRadio" value="overlay"
+							   onclick="changeHitbox(this)">
 						<label class="loop-label">&#x21bb; <input id="repeatCheckbox" type="checkbox" onclick="changeRepeat(this)"></label>
 						<span id="playStatus" class="status-dot paused"></span>
 					</div>
