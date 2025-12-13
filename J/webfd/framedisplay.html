@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="refresh" content="0;url=../../webfd/framedisplay.html?ver=J&lang=ja">
   <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0;url=/hitbox/?ver=J&lang=ja">
+  <script>
+    (function() {
+      var search = window.location.search;
+      var prefix = '/hitbox/?ver=J&lang=ja';
+      var target = prefix + search.replace(/^\?/, '&') + window.location.hash;
+      window.location.replace(target);
+    })();
+  </script>
   <title>Redirecting…</title>
-  <script>window.location.replace('../../webfd/framedisplay.html?ver=J&lang=ja'+window.location.hash);</script>
 </head>
 <body>
-  <p>Redirecting to Japanese frame display…</p>
+  <p>Redirecting to <a href="/hitbox/?ver=J&lang=ja">/hitbox/?ver=J&lang=ja</a>…</p>
 </body>
 </html>
