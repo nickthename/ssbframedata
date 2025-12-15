@@ -1,4 +1,24 @@
----
-layout: null
-redirect_to: https://smash64.net/armor/
----
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0;url=/armor/">
+  <script>
+    (function() {
+      var target = '/armor/' + (window.location.search || '') + (window.location.hash || '');
+      window.location.replace(target);
+    })();
+  </script>
+  <title>Redirecting…</title>
+</head>
+<body>
+  <p>Redirecting to <a id="redir" href="/armor/">/armor/</a>…</p>
+  <script>
+    (function() {
+      var target = '/armor/' + (window.location.search || '') + (window.location.hash || '');
+      var link = document.getElementById('redir');
+      if (link) link.href = target;
+    })();
+  </script>
+</body>
+</html>
